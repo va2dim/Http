@@ -4,13 +4,36 @@ namespace Runn\tests\Http\Uri;
 
 use Runn\Core\Std;
 use Runn\Http\Uri;
+use Runn\Http\Exceptions\InvalidUrl;
 
 class UriTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testMalformed()
     {
-        // @todo malformed URL
+        $malformedURL = 'http:///'; // allowed only file:///
+        try {
+            new Uri($malformedURL);
+        } catch (InvalidUrl $expected) {
+            return;
+        }
+        $this->fail('An expected exception "InvalidUrl(\'Invalid URL\')" on malformed URL has not been raised.');
+
+        $malformedURL = 'ftp://:80'; // without host
+        try {
+            new Uri($malformedURL);
+        } catch (InvalidUrl $expected) {
+            return;
+        }
+        $this->fail('An expected exception "InvalidUrl(\'Invalid URL\')" on malformed URL has not been raised.');
+
+        $malformedURL = 'https://user@:443'; // without host
+        try {
+            new Uri($malformedURL);
+        } catch (InvalidUrl $expected) {
+            return;
+        }
+        $this->fail('An expected exception "InvalidUrl(\'Invalid URL\')" on malformed URL has not been raised.');
     }
 
     public function testScheme()
